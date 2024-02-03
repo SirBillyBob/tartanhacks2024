@@ -3,6 +3,7 @@ from PIL import Image as img
 import random
 
 def onAppStart(app):
+    app.isStart = False
     app.width = 800
     app.height = 800
     app.background = rgb(0, 0, 0)
@@ -63,7 +64,7 @@ def redrawAll(app):
         drawLabel("SPIN TO WIN", 400, 100, size=70, font='monospace', fill='gold', bold=True)
 
         #wins
-        if (not app.isSpin):
+        if (app.isStart and not app.isSpin):
             strWinnings = winnings([app.imagesSlot1[1], app.imagesSlot2[1], app.imagesSlot3[1]])
             if (strWinnings == "nothing"): strWinnings = "Nothing..."
             elif (strWinnings == "two"): strWinnings = "You won with two of a kind! (+2 XRP)"
@@ -123,20 +124,10 @@ def onStep(app):
                 if (i == 2): imagesSlot = app.imagesSlot3
                 imagesSlot[2] = imagesSlot[1]
                 imagesSlot[1] = imagesSlot[0]
-                if (app.spinCounter == 23):
-                    newList = [0,1,2,3,4,5,6,7]+[app.imagesSlot1[1], app.imagesSlot1[1]]
-                    rand = newList[int(random.randrange(0,10))]
-                    while (rand == imagesSlot[1] or rand == imagesSlot[2]):
-                        rand = newList[int(random.randrange(0,10))]
-                elif (app.spinCounter == 33):
-                    newList = [0,1,2,3,4,5,6,7]+[app.imagesSlot1[1], app.imagesSlot1[1], app.imagesSlot2[1], app.imagesSlot2[1]]
-                    rand = newList[int(random.randrange(0,12))]
-                    while (rand == imagesSlot[1] or rand == imagesSlot[2]):
-                        rand = newList[int(random.randrange(0,12))]
-                else:
+
+                rand = int(random.randrange(0,8))
+                while (rand == imagesSlot[1] or rand == imagesSlot[2]):
                     rand = int(random.randrange(0,8))
-                    while (rand == imagesSlot[1] or rand == imagesSlot[2]):
-                        rand = int(random.randrange(0,8))
                 imagesSlot[0] = rand
             
             app.imagesY[2] = app.imagesY[1]
@@ -203,6 +194,7 @@ def onMousePress(app, x, y):
 
         #spinButton
         if (x >= 542.5 and x <= 642.5 and y >= 625 and y <= 675):
+            app.isStart = True
             app.isSpin = True
             app.spinButtonGrayBackground = False
     
