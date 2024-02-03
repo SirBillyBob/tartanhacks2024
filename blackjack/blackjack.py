@@ -16,7 +16,7 @@ def onAppStart(app):
         for j in range(13):
             temp = app.card.crop( (j*dx, i*dy, (j+1)*dx, (i+1)*dy))
             app.cards.append(CMUImage(temp))
-    print(len(app.cards))
+
     app.startButton = True
     app.startButtonY = 600
     app.isStart = False
@@ -153,7 +153,6 @@ def onMouseMove(app, x, y):
         #startButton
         if (x >= 350 and x <= 450 and y >= app.startButtonY-25 and y <= app.startButtonY+25): app.startButtonGrayBackground = True
         else: app.startButtonGrayBackground = False
-
 
 def onMousePress(app, x, y):
     if (app.isStart):
