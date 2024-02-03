@@ -1,6 +1,7 @@
 from cmu_graphics import *
 from PIL import Image as img
-from mines import minesOAS, minesOMP, minesOS, minesRDA
+from mines import minesOAS, minesOS, minesOMP, minesRDA
+from slots import slotsOAS, slotsOMD, slotsOMM, slotsOMP, slotsOMR, slotsOS, slotsRDA, slotsOKP
 from xrp import Server
 from plinko import Plinko
 import xrpl.account as account
@@ -50,15 +51,10 @@ def reset(app):
     app.running = False
 
     wallet_balance = account.get_balance(app.clientAddress, app.server.client)
-    print("wallet balance:", wallet_balance)
     wallet_balance /= 1000000
-    print("scaled wallet balance:", wallet_balance)
-    print('app balance:', app.balance)
     if wallet_balance < app.balance:
-        print(f"profit of {app.balance - wallet_balance}")
         app.server.pay_client(app.clientWallet, (app.balance - wallet_balance))
     elif wallet_balance > app.balance:
-        print(f"loss of {wallet_balance - app.balance}")
         app.server.pay_server(app.clientWallet, (wallet_balance - app.balance))
 
     index = 0
@@ -129,6 +125,14 @@ def onMouseMove(app, x, y):
     else:
         app.games.OMM(app, x, y)
 
+def onMouseDrag(app, x, y):
+    if app.running:
+        app.games.OMD(app, x, y)
+
+def onMouseRelease(app, x, y):
+    if app.running:
+        app.games.OMR(app, x, y)
+
 class Games:
     def __init__(self, app):
         self.games = [Game('Plinko', app, logo = CMUImage(img.open('logo_assets/istockphoto-1222357475-612x612.jpg'))),
@@ -148,6 +152,12 @@ class Games:
         pass
 
     def OMP(self, app, x, y):
+        pass
+
+    def OMD(self, app, x, y):
+        pass
+
+    def OMR(self, app, x, y):
         pass
 
     def OKP(self, app, key):
@@ -182,7 +192,15 @@ class Game:
             app.games.OMP = minesOMP
 
         if self.name == 'Slots':
-            pass
+            slotsOAS(app)
+            app.games.RDA = slotsRDA
+            app.games.OS = slotsOS
+            app.games.OMP = slotsOMP
+            app.games.OMM = slotsOMM
+            app.games.OMD = slotsOMD
+            app.games.OMR = slotsOMR
+            app.games.OKP = slotsOKP
+            
         if self.name == 'BlackJack':
             pass
         if self.name == 'Roulette':
