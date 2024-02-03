@@ -138,4 +138,3 @@ def dist(v1: Vector2, v2: Vector2 = Vector2(0, 0)) -> float:
    return math.sqrt((v1.x - v2.x)**2 + (v1.y - v2.y)**2)
 
 
-

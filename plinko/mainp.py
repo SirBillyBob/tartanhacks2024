@@ -152,7 +152,6 @@ class Plinko:
 
 
 
-
 if __name__ == "__main__":
    def onAppStart(app):
        app.plinko = Plinko(500)

@@ -6,7 +6,10 @@ from vector2 import *
 
 
 
+
+
 class Ball:
+
 
 
    def __init__(self, pos: Vector2, value: float, randomVel: bool = True):
