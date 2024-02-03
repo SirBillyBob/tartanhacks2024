@@ -19,7 +19,7 @@ def minesOAS(app):
     app.gameOver = False
     app.clicked = 0
     app.cashout = False
-    app.XRP = app.balance
+    app.XRP = 0
     app.xrplogo = CMUImage(img.open('mines_assets/xrp-xrp-logo.png'))
 
     # images
@@ -120,7 +120,7 @@ def minesOMP(app, x, y):
                 app.cashout = False
 
 def cashout(app):
-    app.balance = app.XRP
+    app.balance += app.XRP
 
 def drawGrid(app, grid):
     for row in grid:
@@ -139,9 +139,6 @@ def drawGrid(app, grid):
             elif currGrid.clicked and app.gameOver and not currGrid.mine:
                 if app.explosionImageIndex//2 < 25:
                     drawImage(app.explosionList[(app.explosionImageIndex//2)], x-50, y-50)
-
-def cashout(app):
-    pass
 
 class Grid:
     def __init__(self,app, x, y, width = 100, height = 100, color = "white", border = "black"):
@@ -168,6 +165,10 @@ class Grid:
             self.clicked = True
             self.mine = False
             self.color = 'grey'
+            if self.app.XRP == 0:
+                self.app.XRP = 10
+            else:
+                self.app.XRP *= 2
 
 
 if __name__ == "__main__":

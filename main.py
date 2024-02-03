@@ -13,6 +13,7 @@ def onAppStart(app):
     app.height = 800
     app.background = "black"
     app.running = False
+    app.loading = False
     app.reset = reset
 
     app.server = Server()
@@ -78,11 +79,14 @@ def reset(app):
         app.moneyGIF.append(curr)
     app.moneyIDX = 0
     app.moneyAspect = 153/376
+    app.loading = False
 
 
 
 def redrawAll(app):
-    if not app.running:
+    if app.loading:
+        drawLabel("Making transactions...", app.width / 2, app.height / 2, size=30, bold=True, fill='lightSlateGray')
+    elif not app.running:
         drawLabel(f"Balance: {app.balance}", app.width / 2, 50, size=20, bold=True, fill='white')
 
         #for i in range(4):
