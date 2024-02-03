@@ -124,15 +124,15 @@ def onStep(app):
                 imagesSlot[2] = imagesSlot[1]
                 imagesSlot[1] = imagesSlot[0]
                 if (app.spinCounter == 23):
-                    newList = imagesSlot+[app.imagesSlot1[1], app.imagesSlot1[1]]
-                    rand = int(random.randrange(0,9))%8
+                    newList = [0,1,2,3,4,5,6,7]+[app.imagesSlot1[1], app.imagesSlot1[1]]
+                    rand = newList[int(random.randrange(0,10))]
                     while (rand == imagesSlot[1] or rand == imagesSlot[2]):
-                        rand = int(random.randrange(0,9))%8
+                        rand = newList[int(random.randrange(0,10))]
                 elif (app.spinCounter == 33):
-                    newList = imagesSlot+[app.imagesSlot1[1], app.imagesSlot1[1], app.imagesSlot2[1], app.imagesSlot2[1]]
-                    rand = int(random.randrange(0,10))%8
+                    newList = [0,1,2,3,4,5,6,7]+[app.imagesSlot1[1], app.imagesSlot1[1], app.imagesSlot2[1], app.imagesSlot2[1]]
+                    rand = newList[int(random.randrange(0,12))]
                     while (rand == imagesSlot[1] or rand == imagesSlot[2]):
-                        rand = int(random.randrange(0,10))%8
+                        rand = newList[int(random.randrange(0,12))]
                 else:
                     rand = int(random.randrange(0,8))
                     while (rand == imagesSlot[1] or rand == imagesSlot[2]):
