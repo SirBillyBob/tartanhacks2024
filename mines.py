@@ -84,7 +84,7 @@ def minesOMP(app, x, y):
     if not app.gameOver and not app.cashout:
         if x > 150 and x < 650 and y > 150 and y < 650:
             currx = (x - 150)//100
-            curry = (y - 225)//100
+            curry = (y - 200)//100
             for i in app.grid:
                 for g in i:
                     if g.x == currx and g.y == curry:

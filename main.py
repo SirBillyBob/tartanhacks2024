@@ -130,7 +130,7 @@ class Game:
         self.scx = 0
         self.scy = 0
         self.size = 150
-    
+
     
     def OAS(self, app):
         if self.name == 'Plinko':
