@@ -1,11 +1,10 @@
 from cmu_graphics import *
 
-def onAppStart():
+def onAppStart(app):
     pass
 
 def redrawAll(app):
     pass
-
 
 def onStep(app):
     pass
