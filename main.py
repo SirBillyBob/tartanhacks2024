@@ -1,6 +1,11 @@
 from cmu_graphics import *
 from PIL import Image as img
-from mines import minesOAS,minesOS, minesRDA,minesOMP
+from mines import minesOAS, minesOMP, minesOS, minesRDA
+from xrp import Server
+from plinko import Plinko
+import xrpl.account as account
+
+
 
 def onAppStart(app):
     app.games = Games(app)
@@ -9,6 +14,12 @@ def onAppStart(app):
     app.background = "black"
     app.running = False
     app.reset = reset
+
+    app.server = Server()
+    app.clientWallet = app.server.create_wallet()
+    app.clientAddress = app.clientWallet.address
+    app.server.pay_server(app.clientWallet, 9000)  # start with 1000 tokens
+    app.balance = account.get_balance(app.clientAddress, app.server.client) // 1000000
 
     index = 0
     for i in range(2):
@@ -37,6 +48,18 @@ def reset(app):
     app.background = "black"
     app.running = False
 
+    wallet_balance = account.get_balance(app.clientAddress, app.server.client)
+    print("wallet balance:", wallet_balance)
+    wallet_balance /= 1000000
+    print("scaled wallet balance:", wallet_balance)
+    print('app balance:', app.balance)
+    if wallet_balance < app.balance:
+        print(f"profit of {app.balance - wallet_balance}")
+        app.server.pay_client(app.clientWallet, (app.balance - wallet_balance))
+    elif wallet_balance > app.balance:
+        print(f"loss of {wallet_balance - app.balance}")
+        app.server.pay_server(app.clientWallet, (wallet_balance - app.balance))
+
     index = 0
     for i in range(2):
         for j in range(3):
@@ -60,6 +83,8 @@ def reset(app):
 
 def redrawAll(app):
     if not app.running:
+        drawLabel(f"Balance: {app.balance}", app.width / 2, 50, size=20, bold=True, fill='white')
+
         #for i in range(4):
         #    for j in range(10):
         #        drawImage(app.moneyGIF[app.moneyIDX%30], 4+i*199, 10+j*200*app.moneyAspect, width = 200, height = 200*app.moneyAspect)
@@ -87,7 +112,8 @@ def onMousePress(app,x,y):
 
 
 def onKeyPress(app, key):
-    pass
+    if app.running:
+        app.games.OKP(app, key)
 
 def onMouseMove(app, x, y):
     if not app.running:
@@ -107,6 +133,7 @@ class Games:
                       Game('BlackJack', app, logo = CMUImage(img.open('logo_assets/istockphoto-1222357475-612x612.jpg'))),
                       Game('Roulette', app, logo = CMUImage(img.open('logo_assets/istockphoto-1222357475-612x612.jpg'))),
                       Game('Craps', app, logo = CMUImage(img.open('logo_assets/istockphoto-1222357475-612x612.jpg')))]
+
     def RDA(self, app):
         pass
 
@@ -119,10 +146,14 @@ class Games:
     def OMP(self, app, x, y):
         pass
 
+    def OKP(self, app, key):
+        pass
+
 
 class Game:
     def __init__(self, name, app, logo = None):
         self.app = app
+        self.gameApp = None
         self.name = name
         self.logo = logo
         self.x = 0
@@ -130,11 +161,15 @@ class Game:
         self.scx = 0
         self.scy = 0
         self.size = 150
-    
-    
+
+
     def OAS(self, app):
         if self.name == 'Plinko':
-            pass
+            plinko = Plinko(self.app)
+            app.games.RDA = plinko.redrawAll
+            app.games.OS = plinko.onStep
+            app.games.OMP = plinko.onMousePress
+            app.games.OKP = plinko.onKeyPress
 
         if self.name == 'Mines':
             minesOAS(app)

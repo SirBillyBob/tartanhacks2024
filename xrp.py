@@ -1,5 +1,5 @@
 from xrpl.clients import JsonRpcClient
-from xrpl.wallet import generate_faucet_wallet
+from xrpl.wallet import generate_faucet_wallet, Wallet
 from xrpl.models.transactions import Payment
 from xrpl.utils import xrp_to_drops
 import xrpl.account as account
@@ -16,30 +16,26 @@ class Server:
         self.wallet = generate_faucet_wallet(self.client, debug=True)
         self.address = self.wallet.address
 
-        self.client_wallets = {}
-        self.client_addresses = {}
-
-    def register_new_user(self, user_id: str) -> str:
+    def create_wallet(self) -> Wallet:
         """Returns address of new user wallet."""
-        self.client_wallets[user_id] = generate_faucet_wallet(
-            self.client, debug=True)
-        self.client_addresses[user_id] = self.client_wallets[user_id].address
+        client_wallet = generate_faucet_wallet(self.client, debug=True)
+        return client_wallet
 
-    def pay_server(self, user_id: str, amount: float) -> str:
+    def pay_server(self, wallet: Wallet, amount: float) -> str:
         payment = Payment(
-            account=self.client_addresses[user_id],
+            account=wallet.address,
             amount=xrp_to_drops(amount),
             destination=self.address
         )
         response = submit_and_wait(
-            payment, self.client, self.client_wallets[user_id])
+            payment, self.client, wallet)
         return response
     
-    def pay_client(self, user_id: str, amount: float) -> str:
+    def pay_client(self, wallet: Wallet, amount: float) -> str:
         payment = Payment(
             account=self.address,
             amount=xrp_to_drops(amount),
-            destination=self.client_addresses[user_id]
+            destination=wallet.address
         )
         response = submit_and_wait(
             payment, self.client, self.wallet)

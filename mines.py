@@ -11,12 +11,6 @@ from xrpl.core import addresscodec
 from xrpl.models.requests.account_info import AccountInfo
 
 def minesOAS(app):
-    JSON_RPC_URL = "https://s.altnet.rippletest.net:51234/"
-    client = JsonRpcClient(JSON_RPC_URL)
-    userWallet = generate_faucet_wallet(client, debug=True)
-    userAccount = userWallet.address
-    print(account.get_balance(address = userAccount, client = client))
-    app.bal = account.get_balance(address = userAccount, client = client)
     app.width = 800
     app.height = 800
     app.background = "black"
@@ -25,7 +19,7 @@ def minesOAS(app):
     app.gameOver = False
     app.clicked = 0
     app.cashout = False
-    app.XRP = app.bal
+    app.XRP = app.balance
     app.xrplogo = CMUImage(img.open('mines_assets/xrp-xrp-logo.png'))
 
     # images
@@ -124,7 +118,9 @@ def minesOMP(app, x, y):
                 app.reset(app)
             elif x > 430 and x < 580:
                 app.cashout = False
-        
+
+def cashout(app):
+    app.balance = app.XRP
 
 def drawGrid(app, grid):
     for row in grid:
