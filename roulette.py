@@ -147,7 +147,6 @@ def rouletteOMP(app, x, y):
             spin(app)
             app.balance -= 5
             temp = random.randrange(0, 37)
-            temp = 5  # FIXME
             for i,v in enumerate(app.angles):
                 if v == temp:
                     app.goal = i
