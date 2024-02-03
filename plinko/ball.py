@@ -6,10 +6,13 @@ from vector2 import *
 
 class Ball:
 
-    def __init__(self, pos: Vector2, value: float):
+    def __init__(self, pos: Vector2, value: float, randomVel: bool = True):
         self.pos = pos
         self.randomizePos(1)
-        self.vel = Vector2(0, 0)
+        if randomVel:
+            self.vel = Vector2(rd.uniform(-10, 10), rd.uniform(-5, 5))
+        else:
+            self.vel = Vector2(0, 0)
         self.value = value
 
     def randomizePos(self, scale: float = 0.1):
@@ -27,32 +30,57 @@ class Ball:
         close = self.pos
         far = self.pos - self.vel
         mid = (close + far) / 2
-        while dist(mid, peg.pos) <= 9.9 and dist(close, far) > 0.1:  # can do sum w iterations if heavy
-            # print("mid", dist(mid, peg.pos))
-            # print("close", dist(close, peg.pos))
-            # print("far", dist(far, peg.pos))
-            # print("dist", dist(close, far))
+        while dist(mid, peg.pos) <= (4.9 + peg.radius) and dist(close, far) > 0.1:
             mid = (close + far) / 2
-            if dist(mid, peg.pos) >= 10:
+            if dist(mid, peg.pos) >= (5 + peg.radius):
                 far = mid
             else:
                 close = mid
         self.pos = mid
 
         relPegPos = peg.pos - self.pos
-        remainingDist = relPegPos.mag - 10
-        relPegPos.normalize()
-        self.pos += relPegPos * remainingDist
-        normalComponent = relPegPos * dot(relPegPos, self.vel)
+        remainingDist = relPegPos.mag - (5 + peg.radius)
+        unitRelPegPos = relPegPos.normalize()
+        self.pos += unitRelPegPos * remainingDist
+        normalComponent = unitRelPegPos * dot(unitRelPegPos, self.vel)
         self.vel -= 2 * normalComponent
         self.randomizePos()
         self.randomizeVel()
         if self.vel.mag > 2:
-            self.vel *= 0.5
+            self.vel *= peg.bounce
         else:
             if rd.random() <= 0.5:
                 peg.highlight = True
-                self.vel = -relPegPos * 10
+                self.vel = -unitRelPegPos * 10
+
+    def collideWalls(self, width: int):
+        if self.pos.y <= 100:
+            if abs(self.pos.x - width / 2) >= 30:
+                self.vel.x = -self.vel.x
+        elif self.pos.y >= 700:
+            if self.pos.x <= width / 2 - 285:
+                if self.pos.x <= width / 2 - 330:
+                    self.vel.x = -self.vel.x
+            elif width / 2 + 285 <= self.pos.x:
+                if width / 2 + 330 <= self.pos.x:
+                    self.vel.x = -self.vel.x
+            elif width / 2 - 75 <= self.pos.x <= width / 2 + 75:
+                if abs(self.pos.x - width / 2) >= 70:
+                    self.vel.x = -self.vel.x
+                elif 1 <= abs(self.pos.x - width / 2) <= 11 and self.pos.y > 750:
+                    self.vel.x = -self.vel.x
+            else:
+                if 20 <= self.pos.x % 30 <= 30:
+                    self.vel.x = -self.vel.x
+        else:
+            if 2 * self.pos.x + self.pos.y <= 40 + width:
+                unitNormal = Vector2(-2, -1).normalize()
+                normalComponent = unitNormal * dot(unitNormal, self.vel)
+                self.vel -= 2 * normalComponent
+            elif 2 * (-self.pos.x) + self.pos.y <= 40 - width:
+                unitNormal = Vector2(2, -1).normalize()
+                normalComponent = unitNormal * dot(unitNormal, self.vel)
+                self.vel -= 2 * normalComponent
 
     def draw(self):
         drawCircle(*self.pos, 5, fill='midnightblue')

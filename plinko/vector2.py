@@ -25,9 +25,8 @@ class Vector2:
     def copy(self) -> Vector2:
         return Vector2(self.x, self.y)
 
-    def normalize(self) -> None:
-        self.x /= self.mag
-        self.y /= self.mag
+    def normalize(self) -> Vector2:
+        return self.copy() / self.mag
 
     def rotatedRight(self) -> Vector2:  # TODO: use this func in trig calcs
         return Vector2(self.y, -self.x)

@@ -4,9 +4,10 @@ from vector2 import *
 
 class Peg:
 
-    def __init__(self, pos: Vector2, radius: int = 5, color: str = 'black'):
+    def __init__(self, pos: Vector2, radius: int = 5, bounce: float = 0.5, color: str = 'black'):
         self.pos = pos
         self.radius = radius
+        self.bounce = bounce
         self.color = color
         self.highlight = False
 
