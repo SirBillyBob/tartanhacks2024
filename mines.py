@@ -10,21 +10,22 @@ from xrpl.transaction import submit_and_wait
 from xrpl.core import addresscodec
 from xrpl.models.requests.account_info import AccountInfo
 
-def onAppStart(app):
+def minesOAS(app):
     JSON_RPC_URL = "https://s.altnet.rippletest.net:51234/"
     client = JsonRpcClient(JSON_RPC_URL)
     userWallet = generate_faucet_wallet(client, debug=True)
     userAccount = userWallet.address
     print(account.get_balance(address = userAccount, client = client))
-    bal = account.get_balance(address = userAccount, client = client)
+    app.bal = account.get_balance(address = userAccount, client = client)
     app.width = 800
     app.height = 800
-    app.background = "darkslategrey"
+    app.background = "black"
     app.grid = createGrid(app)
     app.prob = 5
     app.gameOver = False
     app.clicked = 0
-    app.XRP = bal
+    app.cashout = False
+    app.XRP = app.bal
     app.xrplogo = CMUImage(img.open('mines_assets/xrp-xrp-logo.png'))
 
     # images
@@ -51,7 +52,7 @@ def onAppStart(app):
     
 
 
-def redrawAll(app):
+def minesRDA(app):
     drawRect(app.width//2, app.height//12, 250, 75, align = 'center', fill = 'white', border = "black")
     drawLabel("Mines", app.width//2, app.height//12, align = 'center', font = 'monospace', size = 50, fill = 'black',  bold = True)
     drawGrid(app, app.grid)
@@ -65,15 +66,28 @@ def redrawAll(app):
     drawLine(app.width-(app.width//5)-150+60,(app.height//8 + app.height//32), app.width-(app.width//5)-150+60,app.height//8 + app.height//32+60)
     drawRect(app.width//2, app.height - app.height//11 + 10, 150, 50, align='center', fill = 'lightgreen', border = 'black')
     drawLabel('CASH OUT', app.width//2, app.height - app.height//11 + 10, size = 20, fill = "darkgreen", font = "monospace")
+    if app.cashout:
+        drawRect(app.width//2, app.height//2, 400, 300, align = 'center', fill = 'grey', border = 'black')
+        drawLabel(f"Are you sure you want to cash out ", app.width//2, app.height//2 - 100, size = 20)
+        drawLabel(f"{app.XRP} XRP", app.width//2, app.height//2 - 70, size = 20)
+        drawLabel(f"and lose the potential to win more?", app.width//2, app.height//2 - 40, size = 20)
+        drawRect(app.width//2 - 30, app.height//2 + 50, 150, 75, fill = "green", border = 'black', align = "top-right")
+        drawRect(app.width//2 + 30, app.height//2 + 50, 150, 75, fill = "red", border = 'black', align = "top-left")
+        drawLabel('YES', app.width//2 - 75, app.height//2 + 75, align = 'top-right', fill = 'black', size = 35)
+        drawLabel('NO', app.width//2 + 79, app.height//2 + 75, align = 'top-left', fill = 'black', size = 35)
 
 
-def onStep(app):
+
+def minesOS(app):
     app.gemImgIndex += 1
     if app.gameOver: 
         app.explosionImageIndex += 1
     if app.clicked == 20:
         app.gameOver = True
     
+
+def onMouseMove(app, x, y):
+    pass
 
 def createGrid(app, x = 5 , y = 5):
     grid = []
@@ -84,8 +98,8 @@ def createGrid(app, x = 5 , y = 5):
         grid.append(temp)
     return grid
 
-def onMousePress(app, x, y):
-    if not app.gameOver:
+def minesOMP(app, x, y):
+    if not app.gameOver and not app.cashout:
         if x > 150 and x < 650 and y > 150 and y < 650:
             currx = (x - 150)//100
             curry = (y - 225)//100
@@ -97,6 +111,20 @@ def onMousePress(app, x, y):
                         else:
                             break
             pass
+        
+        if x>325 and x<475 and y>713 and y<763 and not app.gameOver:
+            app.cashout = True
+    
+    if app.cashout and not app.gameOver:
+        if y > 450 and y < 525:
+            if x > 220 and x < 370:
+                cashout(app)
+                app.gameOver = True
+                app.running = False
+                app.reset(app)
+            elif x > 430 and x < 580:
+                app.cashout = False
+        
 
 def drawGrid(app, grid):
     for row in grid:
@@ -116,7 +144,8 @@ def drawGrid(app, grid):
                 if app.explosionImageIndex//2 < 25:
                     drawImage(app.explosionList[(app.explosionImageIndex//2)], x-50, y-50)
 
-            
+def cashout(app):
+    pass
 
 class Grid:
     def __init__(self,app, x, y, width = 100, height = 100, color = "white", border = "black"):
