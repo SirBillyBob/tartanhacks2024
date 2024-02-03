@@ -221,6 +221,7 @@ def slotsOMP(app, x, y):
         if (x >= 542.5 and x <= 642.5 and y >= 625 and y <= 675):
             app.isStart = True
             app.isSpin = True
+            app.balance -= 1
             app.spinButtonGrayBackground = False
     
     if (app.isInfo):
