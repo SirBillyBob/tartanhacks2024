@@ -2,12 +2,13 @@ from cmu_graphics import *
 from PIL import Image as img
 import random
 
-def onAppStart(app):
-    app.isStart = False
+
+def slotsOAS(app):
     app.width = 800
     app.height = 800
+    app.isStart = False
     app.background = rgb(0, 0, 0)
-    app.slotMachineLever = (CMUImage(img.open("redcircle.png")), 1)
+    app.slotMachineLever = (CMUImage(img.open("slots_assets/redcircle.png")), 1)
     app.leverX = 730
     app.leverY = 327
     app.slotMachineLeverOn = False
@@ -16,10 +17,14 @@ def onAppStart(app):
     app.spinButtonGrayBackground = False
     app.isInfo = False
     app.isSpin = False
-    app.imageList = [(CMUImage(img.open('balsamiq_logo.png')), 500/1000), (CMUImage(img.open('codedex_logo.png')), 150/939),
-                     (CMUImage(img.open('gsa_logo.png')), 400/400), (CMUImage(img.open('olympus_logo.png')), 380/1123),
-                     (CMUImage(img.open('pls_logo.png')), 405/1200), (CMUImage(img.open('ripple_logo.png')), 735/2560),
-                     (CMUImage(img.open('theroboticsclub_logo.png')), 280/280),(CMUImage(img.open('wolfram_logo.png')), 349/1200)]
+    app.imageList = [(CMUImage(img.open('slots_assets/balsamiq_logo.png')), 500/1000),
+                     (CMUImage(img.open('slots_assets/codedex_logo.png')), 150/939),
+                     (CMUImage(img.open('slots_assets/gsa_logo.png')), 400/400),
+                     (CMUImage(img.open('slots_assets/olympus_logo.png')), 380/1123),
+                     (CMUImage(img.open('slots_assets/pls_logo.png')), 405/1200),
+                     (CMUImage(img.open('slots_assets/ripple_logo.png')), 735/2560),
+                     (CMUImage(img.open('slots_assets/theroboticsclub_logo.png')), 280/280),
+                     (CMUImage(img.open('slots_assets/wolfram_logo.png')), 349/1200)]
     app.imagesSlot1 = [4,5,6]
     app.imagesSlot2 = [4,5,6]
     app.imagesSlot3 = [4,5,6]
@@ -28,8 +33,9 @@ def onAppStart(app):
     app.spinStart = 0
     app.spinCounter = 0
 
-def redrawAll(app):
+def slotsRDA(app):
     if (not app.isInfo):
+        drawLabel(f"Balance: {app.balance} XRP", app.width / 2, 750, size=30, fill='white')
         #levers
         drawPolygon(690, 375, 730, app.leverY-2, 730, app.leverY+3, 690, 380, fill='white')
         drawImage(
@@ -96,13 +102,17 @@ def redrawAll(app):
         drawLabel("To spin the slots, you may either:", 400, 150, size=20, font='monospace', fill='white')
         drawLabel("click the 'Spin' button", 400, 170, size=20, font='monospace', fill='white')
         drawLabel("or", 400, 190, size=20, font='monospace', fill='white')
-        drawLabel("press the lever (red) and pull it down", 400, 207, size=20, font='monospace', fill='white')
+        drawLabel("press the lever (red) and pull it down", 400, 210, size=20, font='monospace', fill='white')
+        drawLabel("Each spin costs 1 XRP.", 400, 230, size=20, font='monospace', fill='white')
         
         drawLabel("Winning:", 400, 300, size=20, font='monospace', fill='white', bold=True)
         drawLabel("2 of a kind = 2 XRP", 400, 320, size=20, font='monospace', fill='white')
         drawLabel("2 of a kind (Ripple) = 4 XRP", 400, 340, size=20, font='monospace', fill='white')
         drawLabel("3 of a kind = 10 XRP", 400, 360, size=20, font='monospace', fill='white')
         drawLabel("3 of a kind (Ripple) = 15 XRP", 400, 380, size=20, font='monospace', fill='white')
+
+        drawLabel("Press [esc] to exit the game.", 400, 500, size=20, font='monospace', fill='white')
+
 
         #infoBackButtonGrayBackground
         if (app.infoBackButtonGrayBackground): drawRect(400, 650, 115, 65, fill='Gray', border=None, borderWidth=2, align='center')
@@ -111,7 +121,8 @@ def redrawAll(app):
         drawLabel(
             "Back", 400, 650, size=20, font='arial', bold=True, italic=False, fill='black', border=None, borderWidth=2, align='center')
     
-def onStep(app):
+
+def slotsOS(app):
     if (app.isSpin):
         app.imagesY[0] += 50
         app.imagesY[1] += 50
@@ -141,8 +152,17 @@ def onStep(app):
                 app.spinStart = 0
                 app.spinCounter = 0
                 app.isSpin = False
+                msg = winnings([app.imagesSlot1[1], app.imagesSlot2[1], app.imagesSlot3[1]])
+                if msg == "two":
+                    app.balance += 2
+                elif msg == "twoRipple":
+                    app.balance += 4
+                elif msg == "three":
+                    app.balance += 10
+                elif msg == "jackpot":
+                    app.balance += 15
 
-def onMouseDrag(app, x, y):
+def slotsOMD(app, x, y):
     if (not app.isInfo and not app.isSpin):
         if (app.slotMachineLeverOn or ((x-app.leverX)**2+(y-app.leverY)**2)**(1/2) < 25):
             #slotmachinelever
@@ -161,16 +181,21 @@ def onMouseDrag(app, x, y):
                 else:
                     app.leverY = y
 
-def onMouseRelease(app, x, y):
+def slotsOKP(app, key):
+    if key == 'escape':
+        app.reset(app)
+
+def slotsOMR(app, x, y):
     app.slotMachineLeverOn = False
 
     if (app.leverY == 410):
         app.isSpin = True
+        app.balance -= 1
         app.leverY = 327
     else:
         app.leverY = 327
 
-def onMouseMove(app, x, y):
+def slotsOMM(app, x, y):
     if (not app.isInfo and not app.isSpin):
         #infoButton
         if (x >= 152.5 and x <= 252.5 and y >= 625 and y <= 675): app.infoButtonGrayBackground = True
@@ -185,7 +210,7 @@ def onMouseMove(app, x, y):
         if (x >= 350 and x <= 450 and y >= 625 and y <= 675): app.infoBackButtonGrayBackground = True
         else: app.infoBackButtonGrayBackground = False
 
-def onMousePress(app, x, y):
+def slotsOMP(app, x, y):
     if (not app.isInfo and not app.isSpin):
         #infoButton
         if (x >= 152.5 and x <= 252.5 and y >= 625 and y <= 675):
@@ -213,5 +238,3 @@ def winnings(list):
         else: return "two"
     else:
         return "nothing"
-
-runApp()

@@ -1,5 +1,4 @@
 from cmu_graphics import *
-import random
 from PIL import Image as img
 from xrpl.clients import JsonRpcClient
 from xrpl.wallet import generate_faucet_wallet
@@ -11,21 +10,15 @@ from xrpl.core import addresscodec
 from xrpl.models.requests.account_info import AccountInfo
 
 def minesOAS(app):
-    JSON_RPC_URL = "https://s.altnet.rippletest.net:51234/"
-    client = JsonRpcClient(JSON_RPC_URL)
-    userWallet = generate_faucet_wallet(client, debug=True)
-    userAccount = userWallet.address
-    print(account.get_balance(address = userAccount, client = client))
-    app.bal = account.get_balance(address = userAccount, client = client)
     app.width = 800
     app.height = 800
     app.background = "black"
     app.grid = createGrid(app)
-    app.prob = 5
+    app.prob = 0.03
     app.gameOver = False
     app.clicked = 0
     app.cashout = False
-    app.XRP = app.bal
+    app.XRP = 0
     app.xrplogo = CMUImage(img.open('mines_assets/xrp-xrp-logo.png'))
 
     # images
@@ -56,6 +49,7 @@ def minesRDA(app):
     drawRect(app.width//2, app.height//12, 250, 75, align = 'center', fill = 'white', border = "black")
     drawLabel("Mines", app.width//2, app.height//12, align = 'center', font = 'monospace', size = 50, fill = 'black',  bold = True)
     drawGrid(app, app.grid)
+    drawLabel("Click any square to start playing. Each game costs 20 XRP.", app.width // 2, 20, fill='white')  # TODO see abt this
     drawRect(app.width//5,app.height//8 + app.height//32,150,60, fill = "white", border = "black")
     drawImage(app.diamondList[0], app.width//5+8.5, app.height//8+app.height//32+7.5, height = 45, width = 45, align = 'top-left')
     drawLabel(f'{app.clicked}', app.width//5+102,app.height//8 + app.height//32 + 30,size= 40, align = 'center', fill="black", font = "orbitron")
@@ -124,7 +118,11 @@ def minesOMP(app, x, y):
                 app.reset(app)
             elif x > 430 and x < 580:
                 app.cashout = False
-        
+
+def cashout(app):
+    app.balance += app.XRP
+    if app.XRP > 0:
+        app.balance -= 20
 
 def drawGrid(app, grid):
     for row in grid:
@@ -144,9 +142,6 @@ def drawGrid(app, grid):
                 if app.explosionImageIndex//2 < 25:
                     drawImage(app.explosionList[(app.explosionImageIndex//2)], x-50, y-50)
 
-def cashout(app):
-    pass
-
 class Grid:
     def __init__(self,app, x, y, width = 100, height = 100, color = "white", border = "black"):
         self.app = app
@@ -160,18 +155,24 @@ class Grid:
         self.clicked = False
 
     def click(self):
-        currval = random.randrange(0,100,1)
-        if currval < self.app.prob:
+        if random() < self.app.prob:
             self.clicked = True
             self.mine = True
             self.color = 'red'
             self.app.gameOver = True
+            self.app.running = False
+            self.app.reset(self.app)
+            self.app.balance -= 20
         else:
-            self.app.prob += 2
+            self.app.prob += self.app.prob * (1 - self.app.prob)
             self.app.clicked += 1
             self.clicked = True
             self.mine = False
             self.color = 'grey'
+            if self.app.XRP == 0:
+                self.app.XRP = 10
+            else:
+                self.app.XRP *= 2
 
 
 if __name__ == "__main__":
