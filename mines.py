@@ -1,8 +1,22 @@
 from cmu_graphics import *
 import random
 from PIL import Image as img
+from xrpl.clients import JsonRpcClient
+from xrpl.wallet import generate_faucet_wallet
+from xrpl.models.transactions import Payment
+from xrpl.utils import xrp_to_drops
+import xrpl.account as account
+from xrpl.transaction import submit_and_wait
+from xrpl.core import addresscodec
+from xrpl.models.requests.account_info import AccountInfo
 
-def minesOAS(app, XRP = 0):
+def minesOAS(app):
+    JSON_RPC_URL = "https://s.altnet.rippletest.net:51234/"
+    client = JsonRpcClient(JSON_RPC_URL)
+    userWallet = generate_faucet_wallet(client, debug=True)
+    userAccount = userWallet.address
+    print(account.get_balance(address = userAccount, client = client))
+    app.bal = account.get_balance(address = userAccount, client = client)
     app.width = 800
     app.height = 800
     app.background = "black"
@@ -10,8 +24,8 @@ def minesOAS(app, XRP = 0):
     app.prob = 5
     app.gameOver = False
     app.clicked = 0
-    app.XRP = XRP
     app.cashout = False
+    app.XRP = app.bal
     app.xrplogo = CMUImage(img.open('mines_assets/xrp-xrp-logo.png'))
 
     # images
@@ -33,6 +47,9 @@ def minesOAS(app, XRP = 0):
             app.explosionList.append(CMUImage(e.resize((200,200))))
     app.gemImgIndex = 0
     app.explosionImageIndex = 0
+    
+    
+    
 
 
 def minesRDA(app):
@@ -67,6 +84,7 @@ def minesOS(app):
         app.explosionImageIndex += 1
     if app.clicked == 20:
         app.gameOver = True
+    
 
 def onMouseMove(app, x, y):
     pass
