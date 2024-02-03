@@ -8,7 +8,6 @@ from xrpl.core import addresscodec
 from xrpl.models.requests.account_info import AccountInfo
 
 
-
 class Server:
 
     def __init__(self):
@@ -25,7 +24,7 @@ class Server:
         self.client_wallets[user_id] = generate_faucet_wallet(
             self.client, debug=True)
         self.client_addresses[user_id] = self.client_wallets[user_id].address
-    
+
     def pay_server(self, user_id: str, amount: float) -> str:
         payment = Payment(
             account=self.client_addresses[user_id],
