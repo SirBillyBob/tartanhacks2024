@@ -5,21 +5,21 @@ from PIL import Image as img
 #slotmachine
 #800x800
 
-def onAppStart(app):
+def crapsOAS(app):
     app.width = 800
     app.height = 800
     app.background = rgb(0, 83, 24)
-    app.craps = CMUImage(img.open('craps/assets/cboard.PNG'))
+    app.craps = CMUImage(img.open('craps_assets/cboard.PNG'))
     app.rolls = [0, 0]
     app.currMode = "C"
     app.bets = {}
     app.currBet = 10
-    app.dbal = 500
-    app.bal = 500
+    app.dbal = 0
+    app.bal = 0
     app.point = 0
 
 
-def redrawAll(app):
+def crapsRDA(app):
     drawImage(app.craps, 110, 250)
     drawLabel("Craps", 400, 80, size=100, font='arial', bold=False, fill='white')
     drawCircle(621, 415, 2, fill = rgb(222, 244, 53))
@@ -35,8 +35,56 @@ def redrawAll(app):
     drawLabel(app.currBet, 625, 700, size=50, font='arial', bold=False, fill='black')
     drawLine(557, 679, 557, 718, arrowEnd = True)
     drawLine(691, 679, 691, 718, arrowStart = True)
+    drawLabel("Press [esc] to exit.", app.width / 2, 50, fill='white')
+    drawLabel(f"Balance: {app.balance + app.bal} XRP", app.width//2, app.height//2 - 200, size = 20)
+    for i in app.bets:
+        if i == "pass" and app.bets["pass"] != 0:
+            drawCircle(300, 530, 5, fill = 'white')
+        elif i == "no pass" and app.bets["no pass"] != 0:
+            drawCircle(220, 350, 5, fill = 'white')
+        elif i == "dont come" and app.bets["dont come"] != 0:
+            drawCircle(250, 330, 5, fill = 'white')
+        elif i == "come" and app.bets["come"] != 0:
+            drawCircle(359, 300, 5, fill = 'white')
+        elif i == "4" and app.bets["4"] != 0:
+            drawCircle(300, 325, 5, fill = 'white')
+        elif i == "5" and app.bets["5"] != 0:
+            drawCircle(350, 325, 5, fill = 'white')
+        elif i == "six" and app.bets["six"] != 0:
+            drawCircle(400, 325, 5, fill = 'white')
+        elif i == "8" and app.bets["8"] != 0:
+            drawCircle(450, 325, 5, fill = 'white')
+        elif i == "nine" and app.bets["nine"] != 0:
+            drawCircle(500, 325, 5, fill = 'white')
+        elif i == "10" and app.bets["10"] != 0:
+            drawCircle(530, 325, 5, fill = 'white')
+        elif i == "field" and app.bets["field"] != 0:
+            drawCircle(350, 460, 5, fill = 'white')
+        elif i == "2 2" and app.bets["2 2"] != 0:
+            drawCircle(550, 395, 5, fill = 'white')
+        elif i == "5 5" and app.bets["5 5"] != 0:
+            drawCircle(610, 395, 5, fill = 'white')
+        elif i == "3 3" and app.bets["3 3"] != 0:
+            drawCircle(550, 420, 5, fill = 'white')
+        elif i == "4 4" and app.bets["4 4"] != 0:
+            drawCircle(610, 420, 5, fill = 'white')
+        elif i == "seven" and app.bets["seven"] != 0:
+            drawCircle(590, 465, 5, fill = 'white')
+        elif i == "1 2" and app.bets["1 2"] != 0:
+            drawCircle(560, 490, 5, fill = 'white')
+        elif i == "5 6" and app.bets["5 6"] != 0:
+            drawCircle(610, 490, 5, fill = 'white')
+        elif i == "6 6" and app.bets["6 6"] != 0:
+            drawCircle(610, 520, 5, fill = 'white')
+        elif i == "any craps" and app.bets["any craps"] != 0:
+            drawCircle(580, 545, 5, fill = 'white')
 
-def onMousePress(app, x, y):
+def crapsOKP(app, key):
+    if key == "escape":
+        app.balance += app.bal
+        app.reset(app)
+
+def crapsOMP(app, x, y):
     if (x > 175 and x < 195 and y > 310 and y < 545) or (x > 198 and x < 514 and y > 524 and y < 546):
         if(app.currMode == "C"):
             if("pass" in app.bets):
@@ -115,8 +163,10 @@ def onMousePress(app, x, y):
     elif(x > 244 and x < 510 and y > 443 and y < 483):
         if("field" in app.bets):
             app.bets["field"] += 10
+            app.bal -= app.currBet
         else:
             app.bets["field"] = 10
+            app.bal -= app.currBet
     elif(x > 530 and x < 643 and y > 386 and y < 433):
         if(y < 408):
             if(x < 587):
@@ -647,14 +697,10 @@ def onMousePress(app, x, y):
         
                 
     elif(x > 539 and x < 575 and y > 666 and y < 735):
-        if(app.currBet > 10):
-            app.currBet -= 10
+        if(app.currBet > 5):
+            app.currBet -= 5
     elif(x > 672 and x < 708 and y > 666 and y < 735):
-        app.currBet += 10
+        app.currBet += 5
         
     
 
-
-runApp()
-
-#'svg-cards/ace_of_spades.svg'
