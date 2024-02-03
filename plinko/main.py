@@ -1,6 +1,8 @@
 from cmu_graphics import *
 from ball import Ball
 from peg import Peg
+import random as rd
+from vector2 import *
 
 
 def redrawAll(app):
@@ -12,7 +14,8 @@ def redrawAll(app):
 
 
 def onMousePress(app, mouseX, mouseY):
-    app.balls.append(Ball([app.width / 2, 25], 10))
+    randX = rd.uniform(-20, 20)
+    app.balls.append(Ball(Vector2(app.width / 2 + randX, 150), 10))
 
 
 def onStep(app):
@@ -20,8 +23,13 @@ def onStep(app):
         ball.vel[1] += 1
         ball.updatePos()
         for peg in app.pegs:
-            if dist(*peg.pos, *ball.pos) <= 10:
-                ball.collidePeg()
+            if dist(peg.pos, ball.pos) <= 10:
+                ball.collidePeg(peg)
+                break
+
+
+def onKeyPress(app, key):
+    onMousePress(app, 0, 0)
 
 
 def onAppStart(app):
@@ -33,17 +41,17 @@ def onAppStart(app):
     rows = 20
     pegWidth = 30
     pegHeight = 30
-    firstY = 50
-    for row in range(rows):
+    firstY = 100
+    for row in range(3, rows):
         thisY = firstY + row * pegHeight
         firstX = app.width / 2 - pegWidth * (row - 1) / 2
         nPegs = row
         for col in range(nPegs):
             thisX = firstX + pegWidth * col
-            app.pegs.append(Peg((thisX, thisY)))
+            app.pegs.append(Peg(Vector2(thisX, thisY)))
 
     app.balls = []
-    app.stepsPerSecond = 60
+    app.stepsPerSecond = 25
 
 
 if __name__ == '__main__':
