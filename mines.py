@@ -5,13 +5,15 @@ from PIL import Image as img
 def onAppStart(app):
     app.width = 800
     app.height = 800
-    app.background = 'Green'
+    app.background = "darkslategrey"
     app.grid = createGrid(app)
-    app.prob = 10
+    app.prob = 5
     app.gameOver = False
+    app.clicked = 0
+    app.XRP = 0
+    app.xrplogo = CMUImage(img.open('mines_assets/xrp-xrp-logo.png'))
 
     # images
-    
     explosion = img.open('mines_assets/explosion.png')
     diamond = img.open('mines_assets/gems.png')
     app.diamondList = []
@@ -33,12 +35,27 @@ def onAppStart(app):
 
 
 def redrawAll(app):
+    drawRect(app.width//2, app.height//12, 250, 75, align = 'center', fill = 'white', border = "black")
+    drawLabel("Mines", app.width//2, app.height//12, align = 'center', font = 'monospace', size = 50, fill = 'black',  bold = True)
     drawGrid(app, app.grid)
+    drawRect(app.width//5,app.height//8 + app.height//32,150,60, fill = "white", border = "black")
+    drawImage(app.diamondList[0], app.width//5+8.5, app.height//8+app.height//32+7.5, height = 45, width = 45, align = 'top-left')
+    drawLabel(f'{app.clicked}', app.width//5+102,app.height//8 + app.height//32 + 30,size= 40, align = 'center', fill="black", font = "orbitron")
+    drawLine(app.width//5 + 60,app.height//8 + app.height//32, app.width//5 + 60,app.height//8 + app.height//32+60)
+    drawRect(app.width-(app.width//5)-150,app.height//8 + app.height//32,150,60, fill = "white", border = "black")
+    drawImage(app.xrplogo, app.width -(app.width//5+8.5)-133, (app.height//8+app.height//32+7.5), height = 45, width = 45, align = 'top-left')
+    drawLabel(f'{app.XRP}', app.width-(app.width//5+102)+57,(app.height//8 + app.height//32 + 30),size= 40, align = 'center', fill="black", font = "orbitron")
+    drawLine(app.width-(app.width//5)-150+60,(app.height//8 + app.height//32), app.width-(app.width//5)-150+60,app.height//8 + app.height//32+60)
+    drawRect(app.width//2, app.height - app.height//11 + 10, 150, 50, align='center', fill = 'lightgreen', border = 'black')
+    drawLabel('CASH OUT', app.width//2, app.height - app.height//11 + 10, size = 20, fill = "darkgreen", font = "monospace")
+
 
 def onStep(app):
     app.gemImgIndex += 1
     if app.gameOver: 
         app.explosionImageIndex += 1
+    if app.clicked == 20:
+        app.gameOver = True
 
 def createGrid(app, x = 5 , y = 5):
     grid = []
@@ -53,7 +70,7 @@ def onMousePress(app, x, y):
     if not app.gameOver:
         if x > 150 and x < 650 and y > 150 and y < 650:
             currx = (x - 150)//100
-            curry = (y - 150)//100
+            curry = (y - 225)//100
             for i in app.grid:
                 for g in i:
                     if g.x == currx and g.y == curry:
@@ -67,24 +84,24 @@ def drawGrid(app, grid):
     for row in grid:
         for currGrid in row:
             x = 150 + currGrid.x*currGrid.width
-            y = 150 + currGrid.y*currGrid.height
+            y = 200 + currGrid.y*currGrid.height
             width = currGrid.width
             height = currGrid.height
             drawRect(x, y, width, height, fill = currGrid.color, border = currGrid.border)
     for row in grid:
         for currGrid in row:
             x = 150 + currGrid.x*currGrid.width
-            y = 150 + currGrid.y*currGrid.height
-            if currGrid.clicked and not app.gameOver:
+            y = 200 + currGrid.y*currGrid.height
+            if currGrid.clicked and ((not app.gameOver) or app.clicked == 20):
                 drawImage(app.diamondList[(app.gemImgIndex//4)%39], x+12.5, y+12.5)
-            elif currGrid.clicked and currGrid.mine:
+            elif currGrid.clicked and app.gameOver and not currGrid.mine:
                 if app.explosionImageIndex//2 < 25:
                     drawImage(app.explosionList[(app.explosionImageIndex//2)], x-50, y-50)
 
             
 
 class Grid:
-    def __init__(self,app, x, y, width = 100, height = 100, color = "darkslategrey", border = "black"):
+    def __init__(self,app, x, y, width = 100, height = 100, color = "white", border = "black"):
         self.app = app
         self.x = x
         self.y = y
@@ -103,10 +120,11 @@ class Grid:
             self.color = 'red'
             self.app.gameOver = True
         else:
-            self.app.prob += 3
+            self.app.prob += 2
+            self.app.clicked += 1
             self.clicked = True
             self.mine = False
-            self.color = 'lightSlateGrey'
+            self.color = 'grey'
 
 
 if __name__ == "__main__":
