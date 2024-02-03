@@ -2,10 +2,10 @@ from cmu_graphics import *
 import random
 from PIL import Image as img
 
-def onAppStart(app):
+def minesOAS(app):
     app.width = 800
     app.height = 800
-    app.background = "darkslategrey"
+    app.background = "black"
     app.grid = createGrid(app)
     app.prob = 5
     app.gameOver = False
@@ -34,7 +34,7 @@ def onAppStart(app):
     app.explosionImageIndex = 0
 
 
-def redrawAll(app):
+def minesRDA(app):
     drawRect(app.width//2, app.height//12, 250, 75, align = 'center', fill = 'white', border = "black")
     drawLabel("Mines", app.width//2, app.height//12, align = 'center', font = 'monospace', size = 50, fill = 'black',  bold = True)
     drawGrid(app, app.grid)
@@ -50,7 +50,7 @@ def redrawAll(app):
     drawLabel('CASH OUT', app.width//2, app.height - app.height//11 + 10, size = 20, fill = "darkgreen", font = "monospace")
 
 
-def onStep(app):
+def minesOS(app):
     app.gemImgIndex += 1
     if app.gameOver: 
         app.explosionImageIndex += 1
@@ -66,7 +66,7 @@ def createGrid(app, x = 5 , y = 5):
         grid.append(temp)
     return grid
 
-def onMousePress(app, x, y):
+def minesOMP(app, x, y):
     if not app.gameOver:
         if x > 150 and x < 650 and y > 150 and y < 650:
             currx = (x - 150)//100
