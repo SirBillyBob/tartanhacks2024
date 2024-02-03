@@ -4,6 +4,7 @@ from mines import minesOAS, minesOS, minesOMP, minesRDA, minesOKP
 from slots import slotsOAS, slotsOMD, slotsOMM, slotsOMP, slotsOMR, slotsOS, slotsRDA, slotsOKP
 from roulette import rouletteOAS, rouletteOMP, rouletteOS, rouletteRDA, rouletteOKP
 from craps import crapsOAS, crapsRDA, crapsOMP, crapsOKP
+from blackjack import blackjackOAS, blackjackRA, blackjackOMM, blackjackOMP
 from xrp import Server
 from plinko import Plinko
 import xrpl.account as account
@@ -208,7 +209,10 @@ class Game:
             app.games.OKP = slotsOKP
             
         if self.name == 'BlackJack':
-            pass
+            blackjackOAS(app)
+            app.games.RDA = blackjackRA
+            app.games.OMM = blackjackOMM
+            app.games.OMP = blackjackOMP
 
         if self.name == 'Roulette':
             rouletteOAS(app)

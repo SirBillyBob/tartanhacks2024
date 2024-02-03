@@ -3,13 +3,13 @@ from PIL import Image as img
 import random
 
 
-def onAppStart(app):
+def blackjackOAS(app):
     app.width = 800
     app.height = 800
     app.background = rgb(0, 0, 0)
 
     app.cards = []
-    app.card = img.open('playingcards.png')
+    app.card = img.open('blackjack_assets/playingcards.png')
     dx = 2906/13
     dy = 1563/5
     for i in range(5):
@@ -36,7 +36,7 @@ def onAppStart(app):
     app.gameOver = False
 
 
-def redrawAll(app):
+def blackjackRA(app):
     if (not app.isStart):
         #title
         drawLabel("Blackjack", 400, 100, size=70, font='monospace', fill='white', bold=True)
@@ -131,7 +131,7 @@ def redrawAll(app):
 
 #def onStep(app):
 
-def onMouseMove(app, x, y):
+def blackjackOMM(app, x, y):
     if (app.isStart):
         if (app.isPlayerTurn):
             #hitButton
@@ -154,7 +154,7 @@ def onMouseMove(app, x, y):
         if (x >= 350 and x <= 450 and y >= app.startButtonY-25 and y <= app.startButtonY+25): app.startButtonGrayBackground = True
         else: app.startButtonGrayBackground = False
 
-def onMousePress(app, x, y):
+def blackjackOMP(app, x, y):
     if (app.isStart):
         if (app.isPlayerTurn):
             #hitButton
@@ -175,7 +175,7 @@ def onMousePress(app, x, y):
             #replayButton
             if (x >= 350 and x <= 450 and y >= 650-25 and y <= 650+25):
                 app.replayButtonGrayBackground = True
-                onAppStart(app)
+                blackjackOAS(app)
             else: app.replayButtonGrayBackground = False
     else:
         if (x >= 350 and x <= 450 and y >= app.startButtonY-25 and y <= app.startButtonY+25):
@@ -241,5 +241,3 @@ def hit(app, list, isPlayer):
     elif (isPlayer and len(list) == 5):
         app.playerDirectWin = True
         app.gameOver = True
-
-runApp()
