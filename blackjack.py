@@ -34,9 +34,15 @@ def blackjackOAS(app):
     app.houseBust = False
     app.playerDirectWin = False
     app.gameOver = False
+    app.balance -= 10
+    
 
+def blackjackOKP(app, key):
+    if key == "escape":
+        app.reset(app)
 
 def blackjackRA(app):
+    drawLabel(f"Balance: {app.balance} XRP", app.width//2, 144, size = 20, fill = 'white')
     if (not app.isStart):
         #title
         drawLabel("Blackjack", 400, 100, size=70, font='monospace', fill='white', bold=True)
@@ -219,7 +225,9 @@ def sum(list):
 
 def hit(app, list, isPlayer):
     if (isPlayer):
-        if (sum(list) == 21): app.isPlayerTurn = False
+        if (sum(list) == 21): 
+            app.balance+= 20
+            app.isPlayerTurn = False
     if (not isPlayer):
         if (sum(list) >= 17):
             app.gameOver = True
@@ -237,7 +245,9 @@ def hit(app, list, isPlayer):
         else:
             app.houseBust = True
             app.playerDirectWin = True
+            app.balance += 20
         app.gameOver = True
     elif (isPlayer and len(list) == 5):
         app.playerDirectWin = True
+        app.balance += 20
         app.gameOver = True
