@@ -65,11 +65,6 @@ class Ball:
             elif width / 2 + 285 <= self.pos.x:
                 if width / 2 + 330 <= self.pos.x:
                     self.vel.x = -self.vel.x
-            elif width / 2 - 75 <= self.pos.x <= width / 2 + 75:
-                if abs(self.pos.x - width / 2) >= 70:
-                    self.vel.x = -self.vel.x
-                elif 1 <= abs(self.pos.x - width / 2) <= 11 and self.pos.y > 750:
-                    self.vel.x = -self.vel.x
             else:
                 if 20 <= self.pos.x % 30 <= 30:
                     self.vel.x = -self.vel.x

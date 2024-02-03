@@ -73,7 +73,7 @@ class Shape(object, metaclass=_ShapeMetaclass):
     _init_attrs = {'fill', 'border', 'borderWidth', 'opacity', 'rotateAngle', 'dashes', 'align', 'visible', 'db'}
 
     def __init__(self, clsName, argNames, args, kwargs):
-        if app is not None and app._app._isMvc:
+        if self is not None and self._app._isMvc:
             shapeName = self.__class__.__name__
             raise NotImplementedError(f"Whoops! {shapeName} objects are not available in CS3 Mode. Did you want draw{shapeName}?")
 
@@ -197,7 +197,7 @@ class Group(Shape):
     _init_attrs = {'visible', 'db'}
 
     def __init__(self, *args, **kwargs):
-        if app is not None and app._app._isMvc:
+        if self is not None and self._app._isMvc:
             raise NotImplementedError("Whoops! Group objects are not available in CS3 Mode.")
         super().__init__('Group', [ ], [ ], kwargs)
         for shape in args: self.add(shape)
@@ -241,17 +241,17 @@ APP_FN_NAMES = ['onAppStart',
 
 class NoMvc():
     def __enter__(self):
-        self.oldMvc = app._app._isMvc
-        app._app._isMvc = False
+        self.oldMvc = self._app._isMvc
+        self._app._isMvc = False
 
     def __exit__(self, excType, excValue, tb):
-        app._app._isMvc = self.oldMvc
+        self._app._isMvc = self.oldMvc
 
 def makeDrawFn(shape):
     def drawFn(*args, **kwargs):
-        if (not app._app._isMvc):
+        if (not self._app._isMvc):
             raise Exception(f'You called draw{shape.__name__} (a CS3 Mode function) outside of redrawAll.')
-        if (not app._app.inRedrawAll):
+        if (not self._app.inRedrawAll):
             raise MvcException('Cannot draw (modify the view) outside of redrawAll')
         with NoMvc():
             kwargs['isMvc'] = True
@@ -260,7 +260,7 @@ def makeDrawFn(shape):
 
 def makeInvisibleConstructor(shape):
     def constructor(*args, **kwargs):
-        if (not app._app._isMvc):
+        if (not self._app._isMvc):
             raise Exception(f'You called {shape.__name__}Shape (a CS3 Mode function) outside of CS3 Mode. To run your app in CS3 Mode, use runApp().')
         with NoMvc():
             result = shape(*args, **kwargs)
@@ -296,7 +296,7 @@ def translateKeyName(keyName, originalLanguage):
 def cleanAndClose():
     shape_logic.cleanSoundProcesses()
     try:
-        app._app.callUserFn('onAppStop', (), redraw=False)
+        self._app.callUserFn('onAppStop', (), redraw=False)
     except:
         pass
     os._exit(0)
@@ -782,16 +782,16 @@ class AppWrapper(object):
         return super().__setattr__(attr, value)
 
 def runApp(width=400, height=400, **kwargs):
-    if not app._app._ranWithScreens:
+    if not self._app._ranWithScreens:
         for appFnName in APP_FN_NAMES:
             screenAppSuffix = f'_{appFnName}'
-            for globalVarName in app._app.userGlobals:
+            for globalVarName in self._app.userGlobals:
                 if globalVarName.endswith(screenAppSuffix):
                     raise Exception(f'The name of your function "{globalVarName}" ends with "{screenAppSuffix}", which is only allowed if you are using "screens" in CS3 Mode. To run an app with screens, call runAppWithScreens() instead of runApp().')
 
     setupMvc()
-    app.width = width
-    app.height = height
+    self.width = width
+    self.height = height
 
     if SHAPES_CREATED > 1:
         raise Exception('''
@@ -806,27 +806,27 @@ If you'd like to use CS3 Mode, please use drawing functions
 Otherwise, please call cmu_graphics.run() in place of runApp.
 ****************************************************************************''')
 
-    app._app.callUserFn('onAppStart', (), kwargs, redraw=False)
-    if app._app._ranWithScreens:
-        app._app.callUserFn(f'{app._app.activeScreen}_onScreenActivate', ())
-    app._app.redrawAllWrapper() # Draw even if there are no events
+    self._app.callUserFn('onAppStart', (), kwargs, redraw=False)
+    if self._app._ranWithScreens:
+        self._app.callUserFn(f'{self._app.activeScreen}_onScreenActivate', ())
+    self._app.redrawAllWrapper() # Draw even if there are no events
 
     run()
 
 def setActiveScreen(screen, suppressEvent=False):
-    if (not app._app._isMvc):
+    if (not self._app._isMvc):
         raise Exception('You called setActiveScreen (a CS3 Mode function) outside of CS3 Mode. To run your app in CS3 Mode, use runApp() or runAppWithScreens().')
     if (screen in [None, '']) or (not isinstance(screen, str)):
         raise Exception(f'{repr(screen)} is not a valid screen')
     redrawAllFnName = f'{screen}_redrawAll'
-    if redrawAllFnName not in app._app.userGlobals:
+    if redrawAllFnName not in self._app.userGlobals:
         raise Exception(f'Screen {screen} requires {redrawAllFnName}()')
-    app._app.activeScreen = screen
+    self._app.activeScreen = screen
     if not suppressEvent:
-        app._app.callUserFn(f'{screen}_onScreenActivate', ())
+        self._app.callUserFn(f'{screen}_onScreenActivate', ())
 
 def runAppWithScreens(initialScreen, *args, **kwargs):
-    userGlobals = app._app.userGlobals
+    userGlobals = self._app.userGlobals
 
     def checkForAppFns():
         for appFnName in APP_FN_NAMES:
@@ -853,7 +853,7 @@ def runAppWithScreens(initialScreen, *args, **kwargs):
             return onAppStartWrapper
         else:
             def appFnWrapper(*args):
-                screen = app._app.activeScreen
+                screen = self._app.activeScreen
                 screenFnName = f'{screen}_{appFnName}'
                 if screenFnName in userGlobals:
                     screenFn = userGlobals[screenFnName]
@@ -867,10 +867,10 @@ def runAppWithScreens(initialScreen, *args, **kwargs):
                 userGlobals[appFnName] = makeAppFnWrapper(appFnName)
 
     def go():
-        app._app._ranWithScreens = True
+        self._app._ranWithScreens = True
         checkForAppFns()
         wrapScreenFns()
-        app._app._isMvc = True
+        self._app._isMvc = True
         setActiveScreen(initialScreen, suppressEvent=True)
         runApp(*args, **kwargs)
 
@@ -882,9 +882,9 @@ def getImageSize(url):
         return (image.width, image.height)
 
 def setupMvc():
-    app._app._isMvc = True
-    app._app.inRedrawAll = False
-    del app._app.userGlobals['app']
+    self._app._isMvc = True
+    self._app.inRedrawAll = False
+    del self._app.userGlobals['app']
     AppWrapper.readWriteAttrs.remove('paused')
     AppWrapper.allAttrs.remove('paused')
 
@@ -906,10 +906,10 @@ def eventHandlerRepeater(f):
     params = tuple(sig.parameters.keys())
     def g(*args):
         testParams = params
-        if app._app._isMvc:
+        if self._app._isMvc:
             testParams = ('app',) + testParams
         processArgs(f.__name__, testParams, args)
-        if app._app._isMvc:
+        if self._app._isMvc:
             args = args[1:]
         f(*args)
     return g
@@ -917,24 +917,24 @@ def eventHandlerRepeater(f):
 @eventHandlerRepeater
 def onSteps(n):
     for _ in range(n):
-        app._app.callUserFn('onStep', ())
+        self._app.callUserFn('onStep', ())
 
 @eventHandlerRepeater
 def onKeyHolds(keys, n):
     assert isinstance(keys, list), t('keys must be a list')
     for _ in range(n):
-        app._app.callUserFn('onKeyHold', (keys, []))
+        self._app.callUserFn('onKeyHold', (keys, []))
 
 @eventHandlerRepeater
 def onKeyPresses(key, n):
     for _ in range(n):
-        app._app.callUserFn('onKeyPress', (key, []))
+        self._app.callUserFn('onKeyPress', (key, []))
 
 def loop():
     run()
 
 def run():
-    if not app._app._isMvc:
+    if not self._app._isMvc:
         for cs3ModeHandler in ['redrawAll']:
             if cs3ModeHandler in __main__.__dict__:
                 raise Exception(f"You defined the event handler {cs3ModeHandler} which works with CS3 mode, and then called cmu_graphics.run(), which doesn't work with CS3 mode. Did you mean to call runApp instead?")
@@ -946,7 +946,7 @@ def run():
         t = threading.Thread(target=CSAcademyConsole().interact).start()
 
     try:
-        app._app.run()
+        self._app.run()
     except KeyboardInterrupt:
         cleanAndClose()
 
@@ -1140,6 +1140,6 @@ def check_for_exit_without_run():
 """)
         print(" ** To run your animation, add cmu_graphics.run() to the bottom of your file **\n")
 
-app = None
-app = AppWrapper(App())
+self = None
+self = AppWrapper(App())
 atexit.register(check_for_exit_without_run)
