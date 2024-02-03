@@ -36,7 +36,7 @@ def crapsRDA(app):
     drawLine(557, 679, 557, 718, arrowEnd = True)
     drawLine(691, 679, 691, 718, arrowStart = True)
     drawLabel("Press [esc] to exit.", app.width / 2, 50, fill='white')
-    drawLabel(f"Balance: {app.balance - app.bal} XRP", app.width//2, app.height//2 - 200, size = 20)
+    drawLabel(f"Balance: {app.balance + app.bal} XRP", app.width//2, app.height//2 - 200, size = 20)
     for i in app.bets:
         if i == "pass" and app.bets["pass"] != 0:
             drawCircle(300, 530, 5, fill = 'white')
