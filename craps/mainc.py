@@ -38,33 +38,37 @@ def redrawAll(app):
 
 def onMousePress(app, x, y):
     if (x > 175 and x < 195 and y > 310 and y < 545) or (x > 198 and x < 514 and y > 524 and y < 546):
-        if("pass" in app.bets):
-            app.bets["pass"] += app.currBet
-            app.bal -= app.currBet
-        else:
-            app.bets["pass"] = app.currBet
-            app.bal -= app.currBet
+        if(app.currMode == "C"):
+            if("pass" in app.bets):
+                app.bets["pass"] += app.currBet
+                app.bal -= app.currBet
+            else:
+                app.bets["pass"] = app.currBet
+                app.bal -= app.currBet
     elif (x > 255 and x < 513 and y > 491 and y < 514) or (x > 207 and x < 230 and y > 297 and y < 463):
-        if("no pass" in app.bets):
-            app.bets["no pass"] += app.currBet
-            app.bal -= app.currBet
-        else:
-            app.bets["no pass"] = app.currBet
-            app.bal -= app.currBet
+        if(app.currMode == "C"):
+            if("no pass" in app.bets):
+                app.bets["no pass"] += app.currBet
+                app.bal -= app.currBet
+            else:
+                app.bets["no pass"] = app.currBet
+                app.bal -= app.currBet
     elif (x > 232 and x < 278 and y > 294 and y < 366):
-        if("dont come" in app.bets):
-            app.bets["dont come"] += app.currBet
-            app.bal -= app.currBet
-        else:
-            app.bets["dont come"] = app.currBet
-            app.bal -= app.currBet
+        if(app.currMode == "P"):
+            if("dont come" in app.bets):
+                app.bets["dont come"] += app.currBet
+                app.bal -= app.currBet
+            else:
+                app.bets["dont come"] = app.currBet
+                app.bal -= app.currBet
     elif (x > 233 and x < 514 and y > 370 and y < 440):
-        if("come" in app.bets):
-            app.bets["come"] += app.currBet
-            app.bal -= app.currBet
-        else:
-            app.bets["come"] = app.currBet
-            app.bal -= app.currBet
+        if(app.currMode == "P"):
+            if("come" in app.bets):
+                app.bets["come"] += app.currBet
+                app.bal -= app.currBet
+            else:
+                app.bets["come"] = app.currBet
+                app.bal -= app.currBet
     elif(x > 279 and x < 560 and y > 302 and y < 358):
         if(x < 326):
             if("4" in app.bets):
