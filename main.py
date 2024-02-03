@@ -3,6 +3,7 @@ from PIL import Image as img
 from mines import minesOAS, minesOS, minesOMP, minesRDA
 from slots import slotsOAS, slotsOMD, slotsOMM, slotsOMP, slotsOMR, slotsOS, slotsRDA, slotsOKP
 from roulette import rouletteOAS, rouletteOMP, rouletteOS, rouletteRDA, rouletteOKP
+from craps import crapsOAS, crapsRDA, crapsOMP, crapsOKP
 from xrp import Server
 from plinko import Plinko
 import xrpl.account as account
@@ -50,7 +51,7 @@ def reset(app):
     app.height = 800
     app.background = "black"
     app.running = False
-
+    
     wallet_balance = account.get_balance(app.clientAddress, app.server.client)
     wallet_balance /= 1000000
     if wallet_balance < app.balance:
@@ -216,7 +217,10 @@ class Game:
             app.games.OKP = rouletteOKP
 
         if self.name == 'Craps':
-            pass
+            crapsOAS(app)
+            app.games.RDA = crapsRDA
+            app.games.OMP = crapsOMP
+            app.games.OKP = crapsOKP
 
 
 
