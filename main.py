@@ -101,12 +101,22 @@ def onMouseMove(app, x, y):
 
 class Games:
     def __init__(self, app):
+<<<<<<< Updated upstream
         self.games = [Game('Plinko', app, logo = CMUImage(img.open('logo_assets/istockphoto-1222357475-612x612.jpg'))),
                       Game('Mines', app, logo = CMUImage(img.open('logo_assets/istockphoto-1222357475-612x612.jpg'))),
                       Game('Slots', app, logo = CMUImage(img.open('logo_assets/istockphoto-1222357475-612x612.jpg'))),
                       Game('BlackJack', app, logo = CMUImage(img.open('logo_assets/istockphoto-1222357475-612x612.jpg'))),
                       Game('Roulette', app, logo = CMUImage(img.open('logo_assets/istockphoto-1222357475-612x612.jpg'))),
                       Game('Craps', app, logo = CMUImage(img.open('logo_assets/istockphoto-1222357475-612x612.jpg')))]
+=======
+        self.games = [Game('Plinko', app, logo = CMUImage(img.open('logo_assets/plinko-logo.jpg'))),
+                      Game('Mines', app, logo = CMUImage(img.open('logo_assets/mines-logo.webp'))),
+                      Game('Slots', app, logo = CMUImage(img.open('logo_assets/slots-logo.jpg'))),
+                      Game('BlackJack', app, logo = CMUImage(img.open('logo_assets/blackjack-logo.jpg'))),
+                      Game('Roulette', app, logo = CMUImage(img.open('logo_assets/roulette-logo.jpg'))),
+                      Game('Craps', app, logo = CMUImage(img.open('logo_assets/craps-logo.jpg')))]
+
+>>>>>>> Stashed changes
     def RDA(self, app):
         pass
 
