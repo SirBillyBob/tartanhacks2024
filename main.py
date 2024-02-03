@@ -1,6 +1,6 @@
 from cmu_graphics import *
 from PIL import Image as img
-from mines import minesOAS, minesOS, minesOMP, minesRDA
+from mines import minesOAS, minesOS, minesOMP, minesRDA, minesOKP
 from slots import slotsOAS, slotsOMD, slotsOMM, slotsOMP, slotsOMR, slotsOS, slotsRDA, slotsOKP
 from roulette import rouletteOAS, rouletteOMP, rouletteOS, rouletteRDA, rouletteOKP
 from craps import crapsOAS, crapsRDA, crapsOMP, crapsOKP
@@ -195,6 +195,7 @@ class Game:
             app.games.RDA = minesRDA
             app.games.OS = minesOS
             app.games.OMP = minesOMP
+            app.games.OKP = minesOKP
 
         if self.name == 'Slots':
             slotsOAS(app)

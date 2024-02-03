@@ -40,10 +40,6 @@ def minesOAS(app):
             app.explosionList.append(CMUImage(e.resize((200,200))))
     app.gemImgIndex = 0
     app.explosionImageIndex = 0
-    
-    
-    
-
 
 def minesRDA(app):
     drawRect(app.width//2, app.height//12, 250, 75, align = 'center', fill = 'white', border = "black")
@@ -69,7 +65,11 @@ def minesRDA(app):
         drawRect(app.width//2 + 30, app.height//2 + 50, 150, 75, fill = "red", border = 'black', align = "top-left")
         drawLabel('YES', app.width//2 - 75, app.height//2 + 75, align = 'top-right', fill = 'black', size = 35)
         drawLabel('NO', app.width//2 + 79, app.height//2 + 75, align = 'top-left', fill = 'black', size = 35)
-
+    
+    if app.gameOver:
+        drawRect(app.width//2, app.height//2, 400, 200, fill = "grey", border = "black", align = "center", opacity = 30)
+        drawLabel("Game Over!!", app.width//2, app.height//2-20, align = "center",size = 25)
+        drawLabel("Press [esc] to quit.", app.width//2, app.height//2+40, align = "center",size = 15)
 
 
 def minesOS(app):
@@ -142,6 +142,10 @@ def drawGrid(app, grid):
                 if app.explosionImageIndex//2 < 25:
                     drawImage(app.explosionList[(app.explosionImageIndex//2)], x-50, y-50)
 
+def minesOKP(app, key):
+    if app.gameOver and key == "escape":
+        app.running = False
+        app.reset(app)
 class Grid:
     def __init__(self,app, x, y, width = 100, height = 100, color = "white", border = "black"):
         self.app = app
@@ -160,8 +164,6 @@ class Grid:
             self.mine = True
             self.color = 'red'
             self.app.gameOver = True
-            self.app.running = False
-            self.app.reset(self.app)
             self.app.balance -= 20
         else:
             self.app.prob += self.app.prob * (1 - self.app.prob)
