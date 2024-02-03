@@ -2,6 +2,7 @@ from cmu_graphics import *
 from PIL import Image as img
 from mines import minesOAS, minesOS, minesOMP, minesRDA
 from slots import slotsOAS, slotsOMD, slotsOMM, slotsOMP, slotsOMR, slotsOS, slotsRDA, slotsOKP
+from roulette import rouletteOAS, rouletteOMP, rouletteOS, rouletteRDA, rouletteOKP
 from xrp import Server
 from plinko import Plinko
 import xrpl.account as account
@@ -84,6 +85,9 @@ def redrawAll(app):
         drawLabel("Making transactions...", app.width / 2, app.height / 2, size=30, bold=True, fill='lightSlateGray')
     elif not app.running:
         drawLabel(f"Balance: {app.balance} XRP", app.width / 2, 50, size=20, bold=True, fill='white')
+
+        drawLabel(f"client wallet address: {app.clientAddress}", app.width // 4, app.height - 15, fill='white')
+        drawLabel(f"server wallet address: {app.clientAddress}", 3*app.width // 4, app.height - 15, fill='white')
 
         #for i in range(4):
         #    for j in range(10):
@@ -203,8 +207,14 @@ class Game:
             
         if self.name == 'BlackJack':
             pass
+
         if self.name == 'Roulette':
-            pass
+            rouletteOAS(app)
+            app.games.RDA = rouletteRDA
+            app.games.OMP = rouletteOMP
+            app.games.OS = rouletteOS
+            app.games.OKP = rouletteOKP
+
         if self.name == 'Craps':
             pass
 
