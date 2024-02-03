@@ -2,7 +2,7 @@ from cmu_graphics import *
 import random
 from PIL import Image as img
 
-def minesOAS(app):
+def minesOAS(app, XRP = 0):
     app.width = 800
     app.height = 800
     app.background = "black"
@@ -10,7 +10,8 @@ def minesOAS(app):
     app.prob = 5
     app.gameOver = False
     app.clicked = 0
-    app.XRP = 0
+    app.XRP = XRP
+    app.cashout = False
     app.xrplogo = CMUImage(img.open('mines_assets/xrp-xrp-logo.png'))
 
     # images
@@ -48,6 +49,16 @@ def minesRDA(app):
     drawLine(app.width-(app.width//5)-150+60,(app.height//8 + app.height//32), app.width-(app.width//5)-150+60,app.height//8 + app.height//32+60)
     drawRect(app.width//2, app.height - app.height//11 + 10, 150, 50, align='center', fill = 'lightgreen', border = 'black')
     drawLabel('CASH OUT', app.width//2, app.height - app.height//11 + 10, size = 20, fill = "darkgreen", font = "monospace")
+    if app.cashout:
+        drawRect(app.width//2, app.height//2, 400, 300, align = 'center', fill = 'grey', border = 'black')
+        drawLabel(f"Are you sure you want to cash out ", app.width//2, app.height//2 - 100, size = 20)
+        drawLabel(f"{app.XRP} XRP", app.width//2, app.height//2 - 70, size = 20)
+        drawLabel(f"and lose the potential to win more?", app.width//2, app.height//2 - 40, size = 20)
+        drawRect(app.width//2 - 30, app.height//2 + 50, 150, 75, fill = "green", border = 'black', align = "top-right")
+        drawRect(app.width//2 + 30, app.height//2 + 50, 150, 75, fill = "red", border = 'black', align = "top-left")
+        drawLabel('YES', app.width//2 - 75, app.height//2 + 75, align = 'top-right', fill = 'black', size = 35)
+        drawLabel('NO', app.width//2 + 79, app.height//2 + 75, align = 'top-left', fill = 'black', size = 35)
+
 
 
 def minesOS(app):
@@ -56,6 +67,9 @@ def minesOS(app):
         app.explosionImageIndex += 1
     if app.clicked == 20:
         app.gameOver = True
+
+def onMouseMove(app, x, y):
+    pass
 
 def createGrid(app, x = 5 , y = 5):
     grid = []
@@ -67,7 +81,7 @@ def createGrid(app, x = 5 , y = 5):
     return grid
 
 def minesOMP(app, x, y):
-    if not app.gameOver:
+    if not app.gameOver and not app.cashout:
         if x > 150 and x < 650 and y > 150 and y < 650:
             currx = (x - 150)//100
             curry = (y - 225)//100
@@ -79,6 +93,20 @@ def minesOMP(app, x, y):
                         else:
                             break
             pass
+        
+        if x>325 and x<475 and y>713 and y<763 and not app.gameOver:
+            app.cashout = True
+    
+    if app.cashout and not app.gameOver:
+        if y > 450 and y < 525:
+            if x > 220 and x < 370:
+                cashout(app)
+                app.gameOver = True
+                app.running = False
+                app.reset(app)
+            elif x > 430 and x < 580:
+                app.cashout = False
+        
 
 def drawGrid(app, grid):
     for row in grid:
@@ -98,7 +126,8 @@ def drawGrid(app, grid):
                 if app.explosionImageIndex//2 < 25:
                     drawImage(app.explosionList[(app.explosionImageIndex//2)], x-50, y-50)
 
-            
+def cashout(app):
+    pass
 
 class Grid:
     def __init__(self,app, x, y, width = 100, height = 100, color = "white", border = "black"):

@@ -1,8 +1,36 @@
 from cmu_graphics import *
 from PIL import Image as img
-from mines import *
+from mines import minesOAS,minesOS, minesRDA,minesOMP
 
 def onAppStart(app):
+    app.games = Games(app)
+    app.width = 800
+    app.height = 800
+    app.background = "black"
+    app.running = False
+    app.reset = reset
+
+    index = 0
+    for i in range(2):
+        for j in range(3):
+            app.games.games[index].x = j
+            app.games.games[index].y = i
+            app.games.games[index].scx = 200 + app.games.games[index].x*200
+            app.games.games[index].scy = 400 + app.games.games[index].y*200
+
+            index += 1
+    
+    app.moneyGIF = []
+    for i in range(30):
+        temp = f'{i}' if i > 9 else "0" + str(i)
+        name = f"frame_{temp}_delay-0.1s"
+        curr = CMUImage(img.open(f'logo_assets/{name}.png'))
+        app.moneyGIF.append(curr)
+    app.moneyIDX = 0
+    app.moneyAspect = 153/376
+
+
+def reset(app):
     app.games = Games(app)
     app.width = 800
     app.height = 800
@@ -29,14 +57,12 @@ def onAppStart(app):
     app.moneyAspect = 153/376
 
 
-    
-
 
 def redrawAll(app):
     if not app.running:
-        for i in range(4):
-            for j in range(10):
-                drawImage(app.moneyGIF[app.moneyIDX%30], 4+i*199, 10+j*200*app.moneyAspect, width = 200, height = 200*app.moneyAspect)
+        #for i in range(4):
+        #    for j in range(10):
+        #        drawImage(app.moneyGIF[app.moneyIDX%30], 4+i*199, 10+j*200*app.moneyAspect, width = 200, height = 200*app.moneyAspect)
         drawRect(app.width//2, app.height//5, 500, 125, align = 'center',fill = 'white', border = 'black')
         drawLabel("Cardboard Casino", app.width//2, app.height//5, align = 'center', fill = 'black', size = 50, font = "arial")
         for game in app.games.games:
@@ -124,6 +150,8 @@ class Game:
             pass
         if self.name == 'Craps':
             pass
+
+
 
 if __name__ == "__main__":
     runApp()
