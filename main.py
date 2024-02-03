@@ -87,7 +87,7 @@ def redrawAll(app):
     if app.loading:
         drawLabel("Making transactions...", app.width / 2, app.height / 2, size=30, bold=True, fill='lightSlateGray')
     elif not app.running:
-        drawLabel(f"Balance: {app.balance}", app.width / 2, 50, size=20, bold=True, fill='white')
+        drawLabel(f"Balance: {app.balance} XRP", app.width / 2, 50, size=20, bold=True, fill='white')
 
         #for i in range(4):
         #    for j in range(10):

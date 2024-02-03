@@ -1,5 +1,4 @@
 from cmu_graphics import *
-import random
 from PIL import Image as img
 from xrpl.clients import JsonRpcClient
 from xrpl.wallet import generate_faucet_wallet
@@ -15,7 +14,7 @@ def minesOAS(app):
     app.height = 800
     app.background = "black"
     app.grid = createGrid(app)
-    app.prob = 5
+    app.prob = 0.03
     app.gameOver = False
     app.clicked = 0
     app.cashout = False
@@ -50,6 +49,7 @@ def minesRDA(app):
     drawRect(app.width//2, app.height//12, 250, 75, align = 'center', fill = 'white', border = "black")
     drawLabel("Mines", app.width//2, app.height//12, align = 'center', font = 'monospace', size = 50, fill = 'black',  bold = True)
     drawGrid(app, app.grid)
+    drawLabel("Click any square to start playing. Each game costs 20 XRP.", app.width // 2, 20, fill='white')  # TODO see abt this
     drawRect(app.width//5,app.height//8 + app.height//32,150,60, fill = "white", border = "black")
     drawImage(app.diamondList[0], app.width//5+8.5, app.height//8+app.height//32+7.5, height = 45, width = 45, align = 'top-left')
     drawLabel(f'{app.clicked}', app.width//5+102,app.height//8 + app.height//32 + 30,size= 40, align = 'center', fill="black", font = "orbitron")
@@ -121,6 +121,8 @@ def minesOMP(app, x, y):
 
 def cashout(app):
     app.balance += app.XRP
+    if app.XRP > 0:
+        app.balance -= 20
 
 def drawGrid(app, grid):
     for row in grid:
@@ -153,14 +155,16 @@ class Grid:
         self.clicked = False
 
     def click(self):
-        currval = random.randrange(0,100,1)
-        if currval < self.app.prob:
+        if random() < self.app.prob:
             self.clicked = True
             self.mine = True
             self.color = 'red'
             self.app.gameOver = True
+            self.app.running = False
+            self.app.reset(self.app)
+            self.app.balance -= 20
         else:
-            self.app.prob += 2
+            self.app.prob += self.app.prob * (1 - self.app.prob)
             self.app.clicked += 1
             self.clicked = True
             self.mine = False

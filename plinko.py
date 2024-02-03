@@ -118,6 +118,8 @@ class Plinko:
         Set app.width, app.height, app.background before running.
         """
 
+        self.slotFrequencies = [0 for _ in range(21)]
+
         self.width = self.height = 800
         self.background = "black"
 
@@ -143,8 +145,8 @@ class Plinko:
 
         self.balls = []
         self.slotValues = [
-            0,10,5,2,1,0.5,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.5,1,2,5,10,0
-            # 88% return (based on data)
+            0,10,5,1.5,1,0.5,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.5,1.5,2,5,10,0
+            # 96% return (based on data)
         ]
 
     @property
@@ -235,7 +237,7 @@ class Plinko:
             drawLabel("$100", 300, 30, fill="lightSlateGray", size=16, bold=True)
             drawLabel("[6]", 300, 70, fill="lightSlateGray")
 
-            drawLabel(f"Balance: {rounded(self.balance)} tokens", 600, 50, size=20, bold=True, fill="lightSlateGray")
+            drawLabel(f"Balance: {rounded(self.balance)} XRP", 600, 50, size=20, bold=True, fill="lightSlateGray")
             drawLabel(f"(Press [esc] to exit)", 600, 100, size=14, fill="lightSlateGray")
 
             drawLine(self.width / 2 - 35, 0, self.width / 2 - 35, 100, fill='lightSlateGray')
