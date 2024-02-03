@@ -23,7 +23,7 @@ print('prev server:', account.get_balance(address = server_account, client = cli
 my_tx_payment = Payment(
     account = client_account,
     amount=xrp_to_drops(1),
-    destination="rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+    destination=server_account,
 )
 tx_response = submit_and_wait(my_tx_payment, client, client_wallet)
 print('post client:', account.get_balance(address = client_account, client = client))

@@ -18,6 +18,7 @@ class Plinko:
         self.background = "black"
 
         self.balance = balance
+        self.initBalance = balance
 
         self.pegs = []
 
@@ -39,6 +40,10 @@ class Plinko:
             # 88% return (based on data)
         ]
         self.stepsPerSecond = 30
+    
+    @property
+    def netProfit(self):
+        self.balance - self.initBalance
     
     def onKeyPress(self, key):
         if key == '1' and self.balance >= 1:

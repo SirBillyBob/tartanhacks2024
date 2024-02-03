@@ -8,6 +8,7 @@ from xrpl.core import addresscodec
 from xrpl.models.requests.account_info import AccountInfo
 
 
+
 class Server:
 
     def __init__(self):
@@ -42,7 +43,7 @@ class Server:
             destination=self.client_addresses[user_id]
         )
         response = submit_and_wait(
-            payment, self.client, self.client_wallets[user_id])
+            payment, self.client, self.wallet)
         return response
 
 
