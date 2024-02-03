@@ -5,9 +5,9 @@ import random
 from math import sin, cos, pi
 
 def onAppStart(app):
-    reset(app)
+    rouletteOAS(app)
 
-def reset(app):
+def rouletteOAS(app):
     app.width = 800
     app.height = 800
     app.background = rgb(92*0.4, 64*0.4, 51*0.4)
@@ -23,6 +23,7 @@ def reset(app):
     app.blackButton = Button("BLACK", 50+ app.width//3, app.height - app.height//11, 150, 50, 40, "black", "white", "white")
     app.oddButton = Button("ODD", 100+app.width//2, app.height - app.height//11, 150, 50, 40, "lightslategrey", "white", "white")
     app.evenButton = Button("EVEN", 150+app.width//6 + app.width//2, app.height - app.height//11, 150, 50, 40, "darkslategrey", "white", "white")
+    app.playAgain = Button("Spin Again", app.width//2, app.height//2+65,200,50,30, color = "lightgreen", border = "black", textColor = "black")
     app.spinning = False
     app.ballspinning = False
     app.goal = 0
@@ -32,6 +33,7 @@ def reset(app):
     app.clickedNums = []
     app.radius = 220
     app.roundOver = False
+    app.victory = False
     for i in range(1,37):
         if i == 0:
             color = "lightgreen"
@@ -69,6 +71,17 @@ def redrawAll(app):
     for i in app.nums:
         i.drawButton()
     
+    if app.roundOver:
+        drawRect(app.width//2, app.height//2, 400, 200, fill = "grey", border = "black", align = "center")
+        app.playAgain.drawButton()
+        if app.victory:
+            drawLabel("You guessed right!", app.width//2, app.height//2-25, align = "center",size = 25)
+            drawLabel(f"The {app.currOdds} payout has been applied.",app.width//2, app.height//2+25, align = "center", size = 25)
+        else:
+            drawLabel("You were wrong :(", app.width//2, app.height//2-20, align = "center",size = 25)
+        
+
+    
 
 def onStep(app):
     app.RA += app.spinSpeed
@@ -86,7 +99,32 @@ def onStep(app):
         app.radius -= 0.2
         if app.ballRS >= 0:
             app.ballspinning = False
+            app.roundOver = True
+            checkWin(app, app.goal, app.currOption)
         rotateBall(app,app.goal)
+
+def checkWin(app, goal, state):
+    win = False
+    goal = app.angles[goal]
+    if state == "RED":
+        if goal in [3,12,7,18,9,14,1,16,5,23,30,36,34,27,25,21,19,32]:
+            win = True
+    elif state == "BLACK":
+        if goal!= 0 and goal not in [3,12,7,18,9,14,1,16,5,23,30,36,34,27,25,21,19,32]:
+            win = True
+    elif state == "EVEN":
+        if goal%2 == 0:
+            win = True
+    elif state == "ODD":
+        if goal%2 == 1:
+            win = True
+    else:
+        nums = state.split(' ')
+        nums = [int(i) for i in nums]
+        if goal in nums:
+            win = True
+    
+    app.victory = win
 
 def onMousePress(app, x, y):
     if not app.roundOver:
@@ -105,8 +143,8 @@ def onMousePress(app, x, y):
                 if v == temp:
                     app.goal = i
                     break
-            print(temp, app.goal)
-            app.angles.append(app.angles.pop(0))
+    else:
+        app.playAgain.buttonPressed(x,y,rouletteOAS,(app,))
 
 
 def spin(app):
@@ -118,10 +156,8 @@ def spin(app):
 
 def rotateBall(app, goal):
     r = app.radius
-    app.ballX = app.width//2 +60 + r*cos(app.t+pi/18*goal-(pi/(18*36))*goal if goal > 18 else app.t+pi/18*goal)
-    app.ballY = app.height//2+25 + r*sin(app.t+pi/18*goal-(pi/(18*36))*goal if goal > 18 else app.t+pi/18*goal)
-
-
+    app.ballX = app.width//2 +60 + r*cos(app.t+pi/18*goal-(pi/(18*36))*goal if goal >= 18 else app.t+pi/18*goal)
+    app.ballY = app.height//2+25 + r*sin(app.t+pi/18*goal-(pi/(18*36))*goal if goal >= 18 else app.t+pi/18*goal)
 
 
 def popNum(app):
