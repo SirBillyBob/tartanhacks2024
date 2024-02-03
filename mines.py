@@ -45,7 +45,7 @@ def minesRDA(app):
     drawRect(app.width//2, app.height//12, 250, 75, align = 'center', fill = 'white', border = "black")
     drawLabel("Mines", app.width//2, app.height//12, align = 'center', font = 'monospace', size = 50, fill = 'black',  bold = True)
     drawGrid(app, app.grid)
-    drawLabel("Click any square to start playing. Each game costs 20 XRP.", app.width // 2, 20, fill='white')  # TODO see abt this
+    drawLabel("Click any square to start playing. Each game costs 20 XRP.", app.width // 2, 20, fill='white')
     drawRect(app.width//5,app.height//8 + app.height//32,150,60, fill = "white", border = "black")
     drawImage(app.diamondList[0], app.width//5+8.5, app.height//8+app.height//32+7.5, height = 45, width = 45, align = 'top-left')
     drawLabel(f'{app.clicked}', app.width//5+102,app.height//8 + app.height//32 + 30,size= 40, align = 'center', fill="black", font = "orbitron")
