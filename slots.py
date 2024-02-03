@@ -2,6 +2,7 @@ from cmu_graphics import *
 from PIL import Image as img
 import random
 
+
 def slotsOAS(app):
     app.width = 800
     app.height = 800
@@ -112,6 +113,7 @@ def slotsRDA(app):
 
         drawLabel("Press [esc] to exit the game.", 400, 500, size=20, font='monospace', fill='white')
 
+
         #infoBackButtonGrayBackground
         if (app.infoBackButtonGrayBackground): drawRect(400, 650, 115, 65, fill='Gray', border=None, borderWidth=2, align='center')
         #infoBackButton
@@ -119,6 +121,7 @@ def slotsRDA(app):
         drawLabel(
             "Back", 400, 650, size=20, font='arial', bold=True, italic=False, fill='black', border=None, borderWidth=2, align='center')
     
+
 def slotsOS(app):
     if (app.isSpin):
         app.imagesY[0] += 50
