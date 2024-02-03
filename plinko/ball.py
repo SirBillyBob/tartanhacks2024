@@ -7,7 +7,8 @@ from vector2 import *
 class Ball:
 
     def __init__(self, pos: Vector2, value: float, randomVel: bool = True):
-        self.pos = pos
+        shift = Vector2(rd.uniform(-20, 20), rd.uniform(-20, 20))
+        self.pos = pos + shift
         self.randomizePos(1)
         if randomVel:
             self.vel = Vector2(rd.uniform(-10, 10), rd.uniform(-5, 5))
@@ -83,4 +84,15 @@ class Ball:
                 self.vel -= 2 * normalComponent
 
     def draw(self):
-        drawCircle(*self.pos, 5, fill='midnightblue')
+        if self.value <= 1:
+            drawCircle(*self.pos, 5, fill='deepSkyBlue')
+        if 1 < self.value <= 5:
+            drawCircle(*self.pos, 5, fill='mediumSlateBlue')
+        if 5 < self.value <= 10:
+            drawCircle(*self.pos, 5, fill='limeGreen')
+        if 10 < self.value <= 20:
+            drawCircle(*self.pos, 5, fill='crimson')
+        if 20 < self.value <= 50:
+            drawCircle(*self.pos, 5, fill='gold')
+        if 50 < self.value:
+            drawCircle(*self.pos, 5, fill='white')
